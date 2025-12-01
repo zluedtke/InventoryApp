@@ -1,0 +1,51 @@
+import json
+import boto3
+from boto3.dynamodb.conditions import Key
+from botocore.exceptions import ClientError
+
+# Initialize the DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+
+# Define the DynamoDB table name and GSI name
+TABLE_NAME = 'Inventory'
+GSI_NAME = 'GSI_SK_PK'
+
+
+
+def lambda_handler(event, context):
+    table = dynamodb.Table(TABLE_NAME)
+
+    # Extract the '_id' from the path parameters
+    if 'pathParameters' not in event or 'id' not in event['pathParameters']:
+        return {
+            'statusCode': 400,
+            'body': json.dumps("Missing 'id' path parameter")
+        }
+
+    key_value = event['pathParameters']['id']
+
+    # Prepare the key for DynamoDB
+    key = {
+        'id': {'S': key_value}
+    }
+
+  
+    try:
+        # Query to get all items with location_id = id given in param using the GSI
+        response = table.query(
+            IndexName=GSI_NAME,
+            KeyConditionExpression=Key('location_id').eq(key)
+        )
+        items = response.get('Items', [])
+
+    except ClientError as e:
+        print(f"Failed to query items: {e.response['Error']['Message']}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Failed to query items')
+        }
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps(items)
+    }
