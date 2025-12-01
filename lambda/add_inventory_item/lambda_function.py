@@ -27,10 +27,11 @@ def lambda_handler(event, context):
         table.put_item(
             Item={
                 '_id': unique_id,
-                'Date': data['Date'],
-                'Event': data['Event'],
-                'Description': data['Description'],
-                'Location': data['Location']
+                'name': data['name'],
+                'description': data['description'],
+                'qty': data['qty'],
+                'price': data['price'],
+                'location_id': data['location_id']
             }
         )
         return {
@@ -41,4 +42,5 @@ def lambda_handler(event, context):
         return {
             'statusCode': 500,
             'body': json.dumps(f"Error adding item: {str(e)}")
+
         }
