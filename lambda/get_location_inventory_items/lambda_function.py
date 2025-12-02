@@ -2,6 +2,7 @@ import json
 import boto3
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
+from decimal import Decimal
 
 # Initialize the DynamoDB client
 dynamodb = boto3.resource('dynamodb')
@@ -30,14 +31,9 @@ def lambda_handler(event, context):
             'body': json.dumps("Missing 'id' path parameter")
         }
 
-    key_value = event['pathParameters']['id']
+    key = int(event['pathParameters']['id'])
 
-    # Prepare the key for DynamoDB
-    key = {
-        'id': {'S': key_value}
-    }
 
-  
     try:
         # Query to get all items with location_id = id given in param using the GSI
         response = table.query(
