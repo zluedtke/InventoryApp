@@ -1,5 +1,4 @@
 import json
-import requests
 import boto3
 import uuid
 
@@ -27,8 +26,8 @@ def lambda_handler(event, context):
                 'id': unique_id,
                 'name': data['name'],
                 'description': data['description'],
-                'qty': Decimal(str(data["qty"])),
-                'price': Decimal(str(data["price"])),
+                'qty': Decimal(str(data['qty'])),
+                'price': Decimal(str(data['price'])),
                 'location_id': data['location_id']
             }
         )
@@ -42,6 +41,7 @@ def lambda_handler(event, context):
             'body': json.dumps(f"Error adding item: {str(e)}")
 
         }
+
 
 
 
