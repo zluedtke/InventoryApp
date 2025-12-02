@@ -1,6 +1,7 @@
 import json
 import boto3
 import uuid
+from decimal import Decimal
 
 def lambda_handler(event, context):
     # Parse incoming JSON data
@@ -23,7 +24,7 @@ def lambda_handler(event, context):
     try:
         table.put_item(
             Item={
-                'id': unique_id,
+                '_id': unique_id,
                 'name': data['name'],
                 'description': data['description'],
                 'qty': Decimal(str(data['qty'])),
@@ -41,6 +42,7 @@ def lambda_handler(event, context):
             'body': json.dumps(f"Error adding item: {str(e)}")
 
         }
+
 
 
 
