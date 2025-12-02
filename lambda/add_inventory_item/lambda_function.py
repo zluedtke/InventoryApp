@@ -1,6 +1,7 @@
 import json
 import boto3
 import uuid
+import Decimal
 
 def lambda_handler(event, context):
     # Parse incoming JSON data
@@ -41,6 +42,7 @@ def lambda_handler(event, context):
             'body': json.dumps(f"Error adding item: {str(e)}")
 
         }
+
 
 
 
