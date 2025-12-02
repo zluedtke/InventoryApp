@@ -10,7 +10,15 @@ dynamodb = boto3.resource('dynamodb')
 TABLE_NAME = 'Inventory'
 GSI_NAME = 'GSI_SK_PK'
 
-
+# Function to convert Decimal to int/float
+def convert_decimals(obj):
+    if isinstance(obj, list):
+        return [convert_decimals(i) for i in obj]
+    elif isinstance(obj, dict):
+        return {k: convert_decimals(v) for k, v in obj.items()}
+    elif isinstance(obj, Decimal):  
+        return int(obj) if obj % 1 == 0 else float(obj)  # Convert to int if whole number, else float
+    return obj
 
 def lambda_handler(event, context):
     table = dynamodb.Table(TABLE_NAME)
@@ -37,7 +45,9 @@ def lambda_handler(event, context):
             KeyConditionExpression=Key('location_id').eq(key)
         )
         items = response.get('Items', [])
-
+        
+        items = convert_decimals(items)
+        
     except ClientError as e:
         print(f"Failed to query items: {e.response['Error']['Message']}")
         return {
@@ -49,3 +59,4 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps(items)
     }
+
