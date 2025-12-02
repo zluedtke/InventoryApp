@@ -1,4 +1,5 @@
 import json
+import requests
 import boto3
 import uuid
 
@@ -12,12 +13,9 @@ def lambda_handler(event, context):
             'body': json.dumps("Bad request. Please provide the data.")
         }
 
-    # Get the table name from environment variable
-    table_name = 'Inventory'
-
     # DynamoDB setup
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(table_name)
+    table = dynamodb.Table('Inventory')
 
     # Generate a unique ID
     unique_id = str(uuid.uuid4())
@@ -44,5 +42,6 @@ def lambda_handler(event, context):
             'body': json.dumps(f"Error adding item: {str(e)}")
 
         }
+
 
 
